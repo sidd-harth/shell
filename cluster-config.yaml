@@ -1,4 +1,3 @@
----
 #Q4 NameSpace
 apiVersion: v1
 kind: Namespace
@@ -70,9 +69,8 @@ spec:
         name: mysql
         resources: {}
 status: {}
-
 ---
-Q6
+#Q6
 apiVersion: v1
 kind: Pod
 metadata:
@@ -89,4 +87,3 @@ spec:
   dnsPolicy: ClusterFirst
   restartPolicy: Always
 status: {}
----
