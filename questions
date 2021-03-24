@@ -1,0 +1,20 @@
+1. Deploy a pod named nginx-448939 using the nginx:alpine image.
+
+2. Create a namespace named istio-prod-73845 and add a label istio-injection=enabled
+
+3. Create a new Deployment named nginx-frontend with 3 replicas using image nginx:1.19-alpine
+
+4. A replicaset rs-nginx557 is created. However the pods are in error state. Identify the ReplicaSet and fix the issue.
+(add a RS yaml, create a NS k create ns frontend-prod)
+
+5. Create a service database-service to expose the mysql deployment in the db-critical namespace and map its port 3306 within the cluster on port 3308.
+(create a  deploy, ns -  k create ns db-critical && k create deploy  mysql-db --image mysql -n db-critical)
+
+6. Export the logs starting with "MYSQL_" of the pod mysql-pod to the file /opt/k8s/mysql-pod.logs
+(k run mysql-pod --image mysql -n default && mkdir /opt/k8s)
+touch /tmp/tmp/mysql-pod.logs
+cat << EOF > /tmp/mysql-pod.logs
+    - MYSQL_ROOT_PASSWORD
+    - MYSQL_ALLOW_EMPTY_PASSWORD
+    - MYSQL_RANDOM_ROOT_PASSWORD
+EOF

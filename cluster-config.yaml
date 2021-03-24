@@ -1,0 +1,91 @@
+---
+#Q4 NameSpace
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: frontend-prod
+spec: {}
+status: {}
+---
+#Q5 NameSpace
+apiVersion: v1
+kind: Namespace
+metadata:
+  creationTimestamp: null
+  name: db-critical
+spec: {}
+status: {}
+---
+#Q4 ReplicaSet
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  labels:
+    app: frontend
+    version: v2
+  name: rs-nginx557
+  namespace: frontend-prod
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: frontend
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: frontend
+        version: v2
+    spec:
+      containers:
+      - env:
+        image: nginxXXXXXXX
+        imagePullPolicy: IfNotPresent
+        name: nginx
+---
+#Q5 Deploy
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: mysql-db
+  name: mysql-db
+  namespace: db-critical
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-db
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: mysql-db
+    spec:
+      containers:
+      - image: mysql
+        name: mysql
+        resources: {}
+status: {}
+---
+Q6
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: mysql-pod
+  name: mysql-pod
+  namespace: default
+spec:
+  containers:
+  - image: mysql
+    name: mysql-pod
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+---
