@@ -6,6 +6,7 @@ echo $uuid
 
 mkdir -p /tmp/test
 touch score-$uuid.txt
+touch /tmp/test/error-$uuid.txt
 touch /tmp/test/total-$uuid.txt
 touch /tmp/test/percentage-$uuid.txt
 touch /tmp/test/score-percentage-$uuid.txt
@@ -31,7 +32,7 @@ then
         then
           echo "true" && echo "b: 3" >> /tmp/test/score-$uuid.txt;
         else
-          echo {"error":"container image is not nginx:alpine"} echo "b: 0" >> /tmp/test/score-$uuid.txt;
+          echo "Q1 - b - container image is not nginx:alpine" > /tmp/test/error-$uuid.txt  && echo "b: 0" >> /tmp/test/score-$uuid.txt;
         fi
 
 
@@ -39,10 +40,10 @@ then
         then
           echo "true" && echo "c: 3" >> /tmp/test/score-$uuid.txt;
         else
-          echo "pod is not in Running Status" echo "c: 0" >> /tmp/test/score-$uuid.txt;
+          echo "Q1 - c - pod is not in Running Status" >> /tmp/test/error-$uuid.txt && echo "c: 0" >> /tmp/test/score-$uuid.txt;
         fi
 else
-        echo pod doesnt exist && echo "Name: Question1" > /tmp/test/score-$uuid.txt && echo "a: 0" > /tmp/test/score-$uuid.txt;
+        echo "Q1 - a - pod doesnt exist" > /tmp/test/error-$uuid.txt && echo "Name: Question1" > /tmp/test/score-$uuid.txt && echo "a: 0" > /tmp/test/score-$uuid.txt;
 fi
 echo "---------------------------"
 ########### Question 1 ###########
@@ -65,10 +66,10 @@ then
         then
           echo "true" && echo "b: 8" >> /tmp/test/score-$uuid.txt;
         else
-          echo "namespace does not contain label istio-injection as enabled" && echo "b: 0" >> /tmp/test/score-$uuid.txt;
+          echo "Q2 - b - namespace does not contain label istio-injection as enabled" > /tmp/test/error-$uuid.txt && echo "b: 0" >> /tmp/test/score-$uuid.txt;
         fi
 else
-        echo namespace doesnt exist &&  echo "Name: Question2" >> /tmp/test/score-$uuid.txt && echo "a: 0" >> /tmp/test/score-$uuid.txt;
+        echo "Q2 - a - namespace doesnt exist" > /tmp/test/error-$uuid.txt &&  echo "Name: Question2" >> /tmp/test/score-$uuid.txt && echo "a: 0" >> /tmp/test/score-$uuid.txt;
 fi
 echo "---------------------------"
 ########### Question 2 ###########
@@ -94,17 +95,17 @@ then
         then
           echo "true" && echo "b: 3" >> /tmp/test/score-$uuid.txt;
         else
-          echo "replicas should be 3" && echo "b: 0" >> /tmp/test/score-$uuid.txt;
+          echo "Q3 - b - replicas not equal to 3" > /tmp/test/error-$uuid.txt && echo "b: 0" >> /tmp/test/score-$uuid.txt;
         fi
 
         if [[ $checkImage = "nginx:1.19-alpine" ]]
         then
           echo "true" && echo "c: 2" >> /tmp/test/score-$uuid.txt;
         else
-          echo "image name should be nginx:1.19-alpine" && echo "c: 0" >> /tmp/test/score-$uuid.txt;
+          echo "Q3 - c - image name should be nginx:1.19-alpine" >> /tmp/test/error-$uuid.txt && echo "c: 0" >> /tmp/test/score-$uuid.txt;
         fi
 else
-        echo deployment doesnt exist &&  echo "Name: Question3" >> /tmp/test/score-$uuid.txt && echo "a: 0" >> /tmp/test/score-$uuid.txt;
+        echo "Q3 - a - deployment doesnt exist" > /tmp/test/error-$uuid.txt &&  echo "Name: Question3" >> /tmp/test/score-$uuid.txt && echo "a: 0" >> /tmp/test/score-$uuid.txt;
 fi
 echo "---------------------------"
 ########### Question 3 ###########
@@ -130,17 +131,17 @@ then
         then
           echo "true" && echo "b: 6" >> /tmp/test/score-$uuid.txt;
         else
-          echo "ready replicas should be 3" && echo "b: 0" >> /tmp/test/score-$uuid.txt;
+          echo "Q4 - b - number of ready replicas is not equal to 3" > /tmp/test/error-$uuid.txt && echo "b: 0" >> /tmp/test/score-$uuid.txt;
         fi
 
         if [[ $checkImage = "nginx" ]]
         then
           echo "true" && echo "c: 4" >> /tmp/test/score-$uuid.txt;
         else
-          echo "image name should be nginx" && echo "c: 0" >> /tmp/test/score-$uuid.txt;
+          echo "Q4 - c - image name should be nginx" >> /tmp/test/error-$uuid.txt && echo "c: 0" >> /tmp/test/score-$uuid.txt;
         fi
 else
-        echo replicaSet rs-nginx557 doesnt exist &&  echo "Name: Question4" >> /tmp/test/score-$uuid.txt && echo "a: 0" >> /tmp/test/score-$uuid.txt;
+        echo "Q4 - a - replicaSet rs-nginx557 doesnt exist" > /tmp/test/error-$uuid.txt &&  echo "Name: Question4" >> /tmp/test/score-$uuid.txt && echo "a: 0" >> /tmp/test/score-$uuid.txt;
 fi
 echo "---------------------------"
 ########### Question 4 ###########
@@ -171,29 +172,34 @@ then
         echo yes deployment mysql-db exists && echo "Name: Question5" >> /tmp/test/score-$uuid.txt && echo "a: 0" >> /tmp/test/score-$uuid.txt;
 
         echo $availableService | grep database-service > /dev/null
-        if [ $? -eq 0 ] && [[ $serviceName = "database-service" ]] && [[ $serviceSelector = "mysql-db" ]];
+        if [ $? -eq 0 ] && [[ $serviceName = "database-service" ]]
           then
-            echo service database-service exists && echo "b: 3" >> /tmp/test/score-$uuid.txt;
+            echo service database-service exists && echo "b: 1" >> /tmp/test/score-$uuid.txt;
           else
-            echo service name or selector labels might be wrong or database-service doesnt exists;
+            echo "Q5 - b - service name might be wrong or database-service doesnt exists" > /tmp/test/error-$uuid.txt && echo "b: 0" >> /tmp/test/score-$uuid.txt;
           fi
-
+        if [[ $serviceSelector = "mysql-db" ]];
+          then
+            echo service database-service exists && echo "c: 2" >> /tmp/test/score-$uuid.txt;
+          else
+            echo "Q5 - c - selector labels are wrong" > /tmp/test/error-$uuid.txt && echo "c: 0" >> /tmp/test/score-$uuid.txt;
+          fi
         if [[ $servicePort = 3308 ]] && [[ $serviceTargetPort = 3306 ]];
           then
-            echo Ports are correct && echo "b: 5" >> /tmp/test/score-$uuid.txt;
+            echo Ports are correct && echo "d: 5" >> /tmp/test/score-$uuid.txt;
           else
-            echo one or more svc ports are wrong && echo "b: 0" >> /tmp/test/score-$uuid.txt;
+            echo "Q5 - d - one or more svc ports are wrong" >> /tmp/test/error-$uuid.txt && echo "d: 0" >> /tmp/test/score-$uuid.txt;
           fi
 
         if [[ $serviceType = "ClusterIP" ]] ;
           then
-            echo Svc Type is Correct && echo "c: 2" >> /tmp/test/score-$uuid.txt;
+            echo Svc Type is Correct && echo "e: 2" >> /tmp/test/score-$uuid.txt;
           else
-            echo Svc Type is Correct is wrong && echo "c: 0" >> /tmp/test/score-$uuid.txt;
+            echo "Q5 - e - Service Type is wrong" >> /tmp/test/error-$uuid.txt && echo "e: 0" >> /tmp/test/score-$uuid.txt;
           fi
 
 else
-        echo deployment mysql-db doesnt exist &&  echo "Name: Question5" >> /tmp/test/score-$uuid.txt && echo "a: 0" >> /tmp/test/score-$uuid.txt;
+        echo "Q5 - a - deployment mysql-db doesnt exist" > /tmp/test/error-$uuid.txt &&  echo "Name: Question5" >> /tmp/test/score-$uuid.txt && echo "a: 0" >> /tmp/test/score-$uuid.txt;
 fi
 echo "---------------------------"
 ########### Question 5 ###########
@@ -217,7 +223,7 @@ then
           then
             echo File exists && echo "b: 2" >> /tmp/test/score-$uuid.txt;
           else
-            echo Logs file doesnt exists under /opt/k8s/mysql-pod.logs ;
+            echo "Q6 - a - Logs file doesnt exists under /opt/k8s/mysql-pod.logs" > /tmp/test/error-$uuid.txt && echo "b: 0" >> /tmp/test/score-$uuid.txt;
           fi
 
         diff /opt/k8s/mysql-pod.logs /tmp/mysql-pod.logs > /dev/null;
@@ -225,11 +231,11 @@ then
         then
             echo Files Logs Matched echo && echo "c: 8" >> /tmp/test/score-$uuid.txt;
         else
-            echo Invalid logs && echo "c: 0" >> /tmp/test/score-$uuid.txt;
+            echo "Q6 - a - Invalid logs" >> /tmp/test/error-$uuid.txt && echo "c: 0" >> /tmp/test/score-$uuid.txt;
         fi
 
 else
-        echo pod mysql-pod doesnt exist &&  echo "Name: Question6" >> /tmp/test/score-$uuid.txt && echo "a: 0" >> /tmp/test/score-$uuid.txt;
+        echo "Q6 - a - pod mysql-pod doesnt exist" > /tmp/test/error-$uuid.txt &&  echo "Name: Question6" >> /tmp/test/score-$uuid.txt && echo "a: 0" >> /tmp/test/score-$uuid.txt;
 fi
 echo "---------------------------"
 ########### Question 6 ###########

@@ -98,4 +98,6 @@ cat << EOF > /root/.ssh/config
 Host gitlab.com
     StrictHostKeyChecking no
 EOF
+
+kubectl apply -f https://raw.githubusercontent.com/sidd-harth/shell/main/cluster-config.yaml
 echo ".........----------------#################.........----------------#################.........----------------555555555555555555555555"
