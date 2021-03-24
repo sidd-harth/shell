@@ -20,6 +20,7 @@ echo ".........----------------#################.........----------------#######
 apt-get remove -y docker.io kubelet kubeadm kubectl kubernetes-cni
 apt-get autoremove -y
 apt-get install -y etcd-client vim build-essential
+apt-get update
 apt-get install -y jq && apt install -y python3-pip && pip3 install jc
 
 ### UUID of VM
@@ -33,7 +34,6 @@ cat <<EOF > /etc/apt/sources.list.d/kubernetes.list
 deb http://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 KUBE_VERSION=1.20.2
-apt-get update
 apt-get install -y docker.io kubelet=${KUBE_VERSION}-00 kubeadm=${KUBE_VERSION}-00 kubectl=${KUBE_VERSION}-00 kubernetes-cni=0.8.7-00
 
 cat > /etc/docker/daemon.json <<EOF
