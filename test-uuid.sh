@@ -43,7 +43,7 @@ then
           echo "Q1 - c - pod is not in Running Status" >> /tmp/test/error-$uuid.txt && echo "c: 0" >> /tmp/test/score-$uuid.txt;
         fi
 else
-        echo "Q1 - a - pod doesnt exist" >> /tmp/test/error-$uuid.txt && echo "Name: Question1" > /tmp/test/score-$uuid.txt && echo "a: 0" > /tmp/test/score-$uuid.txt;
+        echo "Q1 - a - pod doesnt exist" >> /tmp/test/error-$uuid.txt && echo "Name: Question1" >> /tmp/test/score-$uuid.txt && echo "a: 0" >> /tmp/test/score-$uuid.txt;
 fi
 echo "---------------------------"
 ########### Question 1 ###########
@@ -131,14 +131,14 @@ then
         then
           echo "true" && echo "b: 6" >> /tmp/test/score-$uuid.txt;
         else
-          echo "Q4 - b - number of ready replicas is not equal to 3" >> /tmp/test/error-$uuid.txt && echo "b: 0" >> /tmp/test/score-$uuid.txt;
+          echo "Q4 - c - number of ready replicas is not equal to 3" >> /tmp/test/error-$uuid.txt && echo "b: 0" >> /tmp/test/score-$uuid.txt;
         fi
 
         if [[ $checkImage = "nginx" ]]
         then
           echo "true" && echo "c: 4" >> /tmp/test/score-$uuid.txt;
         else
-          echo "Q4 - c - image name should be nginx" >> /tmp/test/error-$uuid.txt && echo "c: 0" >> /tmp/test/score-$uuid.txt;
+          echo "Q4 - d - image name should be nginx" >> /tmp/test/error-$uuid.txt && echo "c: 0" >> /tmp/test/score-$uuid.txt;
         fi
 else
         echo "Q4 - a - replicaSet rs-nginx557 doesnt exist" >> /tmp/test/error-$uuid.txt &&  echo "Name: Question4" >> /tmp/test/score-$uuid.txt && echo "a: 0" >> /tmp/test/score-$uuid.txt;
