@@ -42,7 +42,7 @@ then
           echo "pod is not in Running Status" echo "c: 0" >> /tmp/test/score-$uuid.txt;
         fi
 else
-        echo pod doesnt exist && mkdir -p /tmp/test && touch score.txt && echo "Name: Question1" > /tmp/test/score-$uuid.txt && echo "a: 0" > /tmp/test/score-$uuid.txt;
+        echo pod doesnt exist && echo "Name: Question1" > /tmp/test/score-$uuid.txt && echo "a: 0" > /tmp/test/score-$uuid.txt;
 fi
 echo "---------------------------"
 ########### Question 1 ###########
