@@ -3,6 +3,7 @@
 uuid=$(jc dmidecode | jq .[1].values.uuid -r)
 echo $uuid
 
+
 mkdir -p /tmp/test
 touch score-$uuid.txt
 touch /tmp/test/total-$uuid.txt

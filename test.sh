@@ -20,7 +20,7 @@ then
         then
           echo "true" && echo "b: 3" >> /tmp/test/score.txt;
         else
-          echo "container image is not nginx:alpine" echo "b: 0" >> /tmp/test/score.txt;
+          echo {"error":"container image is not nginx:alpine"} echo "b: 0" >> /tmp/test/score.txt;
         fi
 
 
@@ -238,10 +238,16 @@ echo "---------------------------"
 
 
 
-################ Score Calculation ####################
-echo "Score Caculation" && touch /tmp/test/total.txt
 
-var=/tmp/test/total.txt
+################ Score Calculation ####################
+echo "Score Caculation" 
+uuid=$(jc dmidecode | jq .[1].values.uuid -r) 
+echo $uuid
+
+touch /tmp/test/total-$uuid.txt
+touch /tmp/test/percentage-$uuid.txt
+
+var=/tmp/test/total-$uuid.txt
 
 cat << EOF > $var
 Name: total
@@ -250,14 +256,18 @@ EOF
 
 awk '/^Name:/ { if (name) printf("%s: %d\n", name, score); name = $2; score = 0; next }
               { score += $2 }
-     END      { printf("%s: %d\n", name, score) }' /tmp/test/score.txt >> /tmp/test/total.txt
+     END      { printf("%s: %d\n", name, score) }' /tmp/test/score.txt >> /tmp/test/total-$uuid.txt
 
-echo "------------------"
-cat /tmp/test/total.txt
+echo "---------------------------"
+cat /tmp/test/total-$uuid.txt
 
-echo "------------------"
+echo "---------------------------"
 awk 'function output() { if (name) printf("%s\t score = %3d, mean = %.1f\n", name, score, score*10/count) }
      /^Name:/          { output(); name = $2; score = count = 0; next }
                        { score += $2; ++count }
-     END               { output() }' /tmp/test/total.txt
+     END               { output() }' /tmp/test/total-$uuid.txt >> /tmp/test/percentage-$uuid.txt
+
+
+cat /tmp/test/percentage-$uuid.txt
+
 ################ Score Calculation ####################

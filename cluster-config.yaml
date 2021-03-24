@@ -70,6 +70,7 @@ spec:
         name: mysql
         resources: {}
 status: {}
+
 ---
 Q6
 apiVersion: v1
