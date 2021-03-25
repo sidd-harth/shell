@@ -101,4 +101,6 @@ Host gitlab.com
 EOF
 
 kubectl apply -f https://raw.githubusercontent.com/sidd-harth/shell/main/cluster-config.yaml
+
+mkdir /var/lib/complete-test && cd /var/lib/complete-test && wget https://raw.githubusercontent.com/sidd-harth/shell/main/test-uuid.sh
 echo ".........----------------#################.........----------------#################.........----------------555555555555555555555555"
