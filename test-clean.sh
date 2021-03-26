@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VMID=$(jc dmidecode | jq .[1].values.SAPID -r)
+VMID=$(jc dmidecode | jq .[1].values.uuid -r)
 SAPID="$VMID-$1"
 
 #SAPID=$(jc dmidecode | jq .[1].values.SAPID -r)
