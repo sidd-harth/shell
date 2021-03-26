@@ -69,6 +69,8 @@ sudo cp -i /etc/kubernetes/admin.conf ~/.kube/config
 
 kubectl apply -f "https://cloud.weave.works/k8s/net?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 
+sleep 60
+
 echo
 echo "untaint controlplane node"
 kubectl taint node $(kubectl get nodes -o=jsonpath='{.items[].metadata.name}')  node-role.kubernetes.io/master-
@@ -102,5 +104,6 @@ EOF
 
 kubectl apply -f https://raw.githubusercontent.com/sidd-harth/shell/main/cluster-config.yaml
 
-mkdir /var/lib/complete-test && cd /var/lib/complete-test && wget https://raw.githubusercontent.com/sidd-harth/shell/main/test-uuid.sh
+mkdir /var/lib/complete-test && cd /var/lib/complete-test && wget https://raw.githubusercontent.com/sidd-harth/shell/main/test-clean.sh
+
 echo ".........----------------#################.........----------------#################.........----------------555555555555555555555555"
