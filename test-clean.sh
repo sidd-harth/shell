@@ -1,5 +1,10 @@
 #!/bin/bash
 
+if [[ $# -eq 0 ]] ; then
+    echo 'Employee ID missing in the request. '
+    exit 1
+fi
+
 VMID=$(jc dmidecode | jq .[1].values.uuid -r)
 SAPID="$VMID-$1"
 
@@ -325,7 +330,7 @@ cat /tmp/test/score-percentage-$SAPID.txt | jc --csv | jq .[1].total -r > /tmp/t
 ################ GIT #####################
 
 
-    cd /tmp/test 
+    cd /tmp/test
   #  git clone git@gitlab.com:sidd-harth/k8s-dnapass.git
     git init > /dev/null 2>&1
     git checkout -b $SAPID > /dev/null 2>&1

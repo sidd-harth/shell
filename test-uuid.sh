@@ -1,5 +1,11 @@
 #!/bin/bash
 
+if [[ $# -eq 0 ]] ; then
+    echo 'Employee ID missing in the request. '
+    exit 1
+fi
+
+
 uuid=$(jc dmidecode | jq .[1].values.uuid -r)
 echo $uuid
 
