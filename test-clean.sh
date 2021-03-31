@@ -1,7 +1,8 @@
 #!/bin/bash
 
 if [[ $# -eq 0 ]] ; then
-    echo 'Employee ID missing in the request. '
+    echo "Employee ID missing in the request."
+    echo "The command should be $(tput setab 1)$(tput setaf 0)bash /var/lib/complete-test/test-clean.sh $(tput setab 2)<hcl-sap-id>$(tput sgr 0)"
     exit 1
 fi
 
@@ -9,9 +10,9 @@ VMID=$(jc dmidecode | jq .[1].values.uuid -r)
 SAPID="$VMID-$1"
 
 #SAPID=$(jc dmidecode | jq .[1].values.SAPID -r)
-echo "**********************************************************************************"
-echo "* Evaluating the Solution for ID - $SAPID *"
-echo "**********************************************************************************"
+echo "$(tput setaf 0)$(tput setab 7)**********************************************************************************$(tput sgr 0)"
+echo "$(tput setaf 0)$(tput setab 7)* Evaluating the Solution for ID - $SAPID *$(tput sgr 0)"
+echo "$(tput setaf 0)$(tput setab 7)**********************************************************************************$(tput sgr 0)"
 
 
 mkdir -p /tmp/test
@@ -57,7 +58,7 @@ then
 else
         echo "Q1 - a - pod doesnt exist" >> /tmp/test/error-$SAPID.txt && echo "Name: Question1" >> /tmp/test/score-$SAPID.txt && echo "a: 0" >> /tmp/test/score-$SAPID.txt;
 fi
-echo "######..................................5%"
+echo "$(tput setaf 1)######..................................5%$(tput sgr 0)"
 ########### Question 1 ###########
 
 ########### Question 2 ###########
@@ -83,7 +84,7 @@ then
 else
         echo "Q2 - a - namespace doesnt exist" >> /tmp/test/error-$SAPID.txt &&  echo "Name: Question2" >> /tmp/test/score-$SAPID.txt && echo "a: 0" >> /tmp/test/score-$SAPID.txt;
 fi
-echo "############............................25%"
+echo "$(tput setaf 2)############............................25%$(tput sgr 0)"
 ########### Question 2 ###########
 
 
@@ -119,7 +120,7 @@ then
 else
         echo "Q3 - a - deployment doesnt exist" >> /tmp/test/error-$SAPID.txt &&  echo "Name: Question3" >> /tmp/test/score-$SAPID.txt && echo "a: 0" >> /tmp/test/score-$SAPID.txt;
 fi
-echo "##################......................50%"
+echo "$(tput setaf 3)##################......................50%$(tput sgr 0)"
 ########### Question 3 ###########
 
 
@@ -155,7 +156,7 @@ then
 else
         echo "Q4 - a - replicaSet rs-nginx557 doesnt exist" >> /tmp/test/error-$SAPID.txt &&  echo "Name: Question4" >> /tmp/test/score-$SAPID.txt && echo "a: 0" >> /tmp/test/score-$SAPID.txt;
 fi
-echo "########################................70%"
+echo "$(tput setaf 4)########################................70%$(tput sgr 0)"
 ########### Question 4 ###########
 
 ########### Question 5 ###########
@@ -213,7 +214,7 @@ then
 else
         echo "Q5 - a - deployment mysql-db doesnt exist" >> /tmp/test/error-$SAPID.txt &&  echo "Name: Question5" >> /tmp/test/score-$SAPID.txt && echo "a: 0" >> /tmp/test/score-$SAPID.txt;
 fi
-echo "##############################..........90%"
+echo "$(tput setaf 5)##############################..........90%$(tput sgr 0)"
 ########### Question 5 ###########
 
 
@@ -249,11 +250,13 @@ then
 else
         echo "Q6 - a - pod mysql-pod doesnt exist" >> /tmp/test/error-$SAPID.txt &&  echo "Name: Question6" >> /tmp/test/score-$SAPID.txt && echo "a: 0" >> /tmp/test/score-$SAPID.txt;
 fi
-echo "#######################################.100%"
+echo "$(tput setaf 6)#######################################.100%$(tput sgr 0)"
 ########### Question 6 ###########
 
 
-
+echo "$(tput setaf 0)$(tput setab 7)**********************************************************************************$(tput sgr 0)"
+echo "$(tput setaf 0)$(tput setab 7)* Evaluation Completed and Pushed to Repo - Thank you for taking up the assessment$(tput sgr 0)"
+echo "$(tput setaf 0)$(tput setab 7)**********************************************************************************$(tput sgr 0)"
 
 
 
