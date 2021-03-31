@@ -254,17 +254,6 @@ echo "$(tput setaf 6)#######################################.100%$(tput sgr 0)"
 ########### Question 6 ###########
 
 
-echo "$(tput setaf 0)$(tput setab 7)**********************************************************************************$(tput sgr 0)"
-echo "$(tput setaf 0)$(tput setab 7)* Evaluation Completed and Pushed to Repo - Thank you for taking up the assessment$(tput sgr 0)"
-echo "$(tput setaf 0)$(tput setab 7)**********************************************************************************$(tput sgr 0)"
-
-
-
-
-
-
-
-
 
 
 
@@ -348,3 +337,9 @@ cat /tmp/test/score-percentage-$SAPID.txt | jc --csv | jq .[1].total -r > /tmp/t
 
 
 ################ GIT #####################
+
+
+
+echo "$(tput setaf 0)$(tput setab 7)**********************************************************************************$(tput sgr 0)"
+echo "$(tput setaf 0)$(tput setab 7)* Evaluation Completed and Pushed to Repo - Thank you for taking up the assessment$(tput sgr 0)"
+echo "$(tput setaf 0)$(tput setab 7)**********************************************************************************$(tput sgr 0)"
