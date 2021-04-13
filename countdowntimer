@@ -1,0 +1,230 @@
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+Add-Type -AssemblyName PresentationFramework
+
+$form = New-Object System.Windows.Forms.Form
+$form.Text = 'HCL SAP ID'
+$form.Size = New-Object System.Drawing.Size(300,200)
+$form.StartPosition = 'CenterScreen'
+
+$okButton = New-Object System.Windows.Forms.Button
+$okButton.Location = New-Object System.Drawing.Point(100,120)
+$okButton.Size = New-Object System.Drawing.Size(75,23)
+$okButton.Text = 'Submit'
+$okButton.DialogResult = [System.Windows.Forms.DialogResult]::OK
+$form.AcceptButton = $okButton
+$form.Controls.Add($okButton)
+
+#$cancelButton = New-Object System.Windows.Forms.Button
+#$cancelButton.Location = New-Object System.Drawing.Point(150,120)
+#$cancelButton.Size = New-Object System.Drawing.Size(75,23)
+#$cancelButton.Text = 'Cancel'
+#$cancelButton.DialogResult = [System.Windows.Forms.DialogResult]::Cancel
+#$form.CancelButton = $cancelButton
+#$form.Controls.Add($cancelButton)
+
+$label = New-Object System.Windows.Forms.Label
+$label.Location = New-Object System.Drawing.Point(10,20)
+$label.Size = New-Object System.Drawing.Size(280,20)
+$label.Text = 'Please enter your HCL Employee ID:'
+$form.Controls.Add($label)
+
+$textBox = New-Object System.Windows.Forms.TextBox
+$textBox.Location = New-Object System.Drawing.Point(10,40)
+$textBox.Size = New-Object System.Drawing.Size(260,20)
+$form.Controls.Add($textBox)
+
+$form.Topmost = $true
+Write-Host "**************************** DO NOT CLOSE THIS ****************************"
+$form.Add_Shown({$textBox.Select()})
+$result = $form.ShowDialog()
+
+if ($result -eq [System.Windows.Forms.DialogResult]::OK)
+{
+    $global:X = $textBox.Text
+    Write-Host "Your SAP - Employee ID - $global:X"
+
+Function Create-GetSchedTime {   
+Param(   
+$SchedTime   
+)
+      $script:StartTime = (Get-Date).AddSeconds($TotalTime)
+      $RestartDate = ((get-date).AddSeconds($TotalTime)).AddMinutes(-5)
+      $RDate = (Get-Date $RestartDate -f 'dd.MM.yyyy') -replace "\.","/"      # 16/03/2016
+      $RTime = Get-Date $RestartDate -f 'HH:mm'                                    # 09:31
+      #&schtasks /delete /tn "Post Maintenance Restart" /f
+      #&schtasks /create /sc once /tn "Post Maintenance Restart" /tr "'C:\Windows\system32\cmd.exe' /c shutdown -r -f -t 300" /SD $RDate /ST $RTime /f
+}
+[System.Reflection.Assembly]::LoadWithPartialName("System.Windows.Forms") | Out-Null
+[System.Reflection.Assembly]::LoadWithPartialName( "Microsoft.VisualBasic") | Out-Null
+$Title = "Kubernetes Assessment Timer"
+#$Title = "Timer"
+
+ #Write-Host "222this is $global:X"
+
+$Message =  "You have 1 hour to complete the Assessment."
+$Message2 =  "After 1 hour your solution will be auto submitted and the machine will shutdown."
+$Message3 = "For manual submission before 1 hour, click the below button"
+$Button1Text = "Submit and Complete"
+$Form = $null
+$Button1 = $null
+$Label = $null
+$TextBox = $null
+$Result = $null
+$timerUpdate = New-Object 'System.Windows.Forms.Timer'
+$TotalTime = 4500 #in seconds
+  #Write-Host "3333this is $global:X"
+#$TotalTime = 60 #in seconds
+Create-GetSchedTime -SchedTime $TotalTime
+$timerUpdate_Tick={
+      # Define countdown timer
+      [TimeSpan]$span = $script:StartTime - (Get-Date)
+      # Update the display
+      $hours = "{0:00}" -f $span.Hours
+      $mins = "{0:00}" -f $span.Minutes
+      $secs = "{0:00}" -f $span.Seconds
+      $labelTime.Text = "{0}:{1}:{2}" -f $hours, $mins, $secs
+      $timerUpdate.Start()
+       #Write-Host "444444this is $global:X"
+      if ($span.TotalSeconds -le 0)
+      {
+       #Write-Host "555555this is $global:X"
+            $timerUpdate.Stop()
+            VBoxManage guestcontrol k8s-assessment run /bin/sh --exe  "/var/lib/complete-test/test-clean.sh" --username root --password vagrant -E SAPID=$global:X --wait-stdout --wait-stderr
+            #&schtasks /delete /tn "Post Maintenance Restart" /f
+            #shutdown -r -f /t 0
+            Write-Host "Submission Completed!"
+
+             Start-Sleep -s 60
+
+            VBoxManage controlvm k8s-assessment acpipowerbutton
+            $Form.Close()
+      }
+}
+$Form_StoreValues_Closing=
+      {
+            #Store the control values
+      }
+
+$Form_Cleanup_FormClosed=
+      {
+            #Remove all event handlers from the controls
+            try
+            {
+                  $Form.remove_Load($Form_Load)
+                  $timerUpdate.remove_Tick($timerUpdate_Tick)
+                  #$Form.remove_Load($Form_StateCorrection_Load)
+                  $Form.remove_Closing($Form_StoreValues_Closing)
+                  $Form.remove_FormClosed($Form_Cleanup_FormClosed)
+            }
+            catch [Exception]
+            { }
+      }
+ #Write-Host "666666this is $global:X"
+
+# Form
+$Form = New-Object -TypeName System.Windows.Forms.Form
+$Form.Text = $Title
+$Form.Size = New-Object -TypeName System.Drawing.Size(407,220)
+$Form.StartPosition = "CenterScreen"
+$Form.Topmost = $true
+$Form.KeyPreview = $true
+$Form.ShowInTaskbar = $Formalse
+$Form.FormBorderStyle = "FixedDialog"
+$Form.MaximizeBox = $Formalse
+$Form.MinimizeBox = $true
+$Icon = [system.drawing.icon]::ExtractAssociatedIcon("c:\Windows\System32\UserAccountControlSettings.exe")
+$Form.Icon = $Icon
+
+# Button One (Reboot/Shutdown Now)
+$Button1 = New-Object -TypeName System.Windows.Forms.Button
+$Button1.Size = New-Object -TypeName System.Drawing.Size(375,25)
+#$Button1.Location = New-Object -TypeName System.Drawing.Size(10,135)
+$Button1.Location = New-Object -TypeName System.Drawing.Size(10,145)
+$Button1.Text = $Button1Text
+$Button1.Font = 'Tahoma, 10pt'
+ #Write-Host "xxxxxxxxxxxthis is $global:X"
+$Button1.Add_Click({
+ #Write-Host "777777777777this is $global:X"
+    $msgBoxInput =  [System.Windows.MessageBox]::Show('Are you sure you want to submit now?','Completion Confirmation','YesNo','Warning')
+    #$title = 'Demographics'
+    #$msg   = 'Enter your demographics:'
+    #$text = [Microsoft.VisualBasic.Interaction]::InputBox($msg, $title)
+    # Write-Host "888888this is $global:X"
+    switch  ($msgBoxInput) {
+        'Yes' {
+      
+            #shutdown -r -f /t 0
+            # [System.Windows.MessageBox]::Show('Cancelled','Submission Cancelled','Ok','Information')
+            VBoxManage guestcontrol k8s-assessment run /bin/sh --exe  "/var/lib/complete-test/test-clean.sh" --username root --password vagrant -E SAPID=$global:X --wait-stdout --wait-stderr
+
+            Start-Sleep -s 60
+
+            VBoxManage controlvm k8s-assessment acpipowerbutton
+
+            #Write-Host "this is $global:X"
+            Write-Host "Submission Completed! - Manual"
+            $Form.Close() 
+              }
+
+        'No' {
+          ## Do something
+      
+          [System.Windows.MessageBox]::Show('Cancelled','Submission Cancelled','Ok','Information')
+            }
+                            }
+
+})
+$Form.Controls.Add($Button1)
+
+
+# Label
+$Label = New-Object -TypeName System.Windows.Forms.Label
+$Label.Size = New-Object -TypeName System.Drawing.Size(380,25)
+$Label.Location = New-Object -TypeName System.Drawing.Size(10,15)
+$Label.Text = $Message
+$label.Font = 'Tahoma, 10pt'
+$Form.Controls.Add($Label)
+
+# Label
+$Label = New-Object -TypeName System.Windows.Forms.Label
+$Label.Size = New-Object -TypeName System.Drawing.Size(380,35)
+$Label.Location = New-Object -TypeName System.Drawing.Size(10,45)
+$Label.Text = $Message2
+$label.Font = 'Tahoma, 10pt'
+$Form.Controls.Add($Label)
+
+# Label
+$Label = New-Object -TypeName System.Windows.Forms.Label
+$Label.Size = New-Object -TypeName System.Drawing.Size(380,25)
+$Label.Location = New-Object -TypeName System.Drawing.Size(10,125)
+$Label.Text = $Message3
+$label.Font = 'Tahoma, 10pt'
+$Form.Controls.Add($Label) 
+
+# labelTime
+$labelTime = New-Object 'System.Windows.Forms.Label'
+$labelTime.AutoSize = $True
+$labelTime.Font = 'Arial, 26pt, style=Bold'
+#$labelTime.Location = '120, 60'
+$labelTime.Location = '120, 90'
+$labelTime.Name = 'labelTime'
+$labelTime.Size = '43, 15'
+$labelTime.TextAlign = 'MiddleCenter'
+$labelTime.ForeColor = "Red"
+$Form.Controls.Add($labelTime)
+
+#Start the timer
+$timerUpdate.add_Tick($timerUpdate_Tick)
+$timerUpdate.Start()
+# Show
+$Form.Add_Shown({$Form.Activate()})
+#Clean up the control events
+$Form.add_FormClosed($Form_Cleanup_FormClosed)
+#Store the control values when form is closing
+#$Form.add_Closing($Form_StoreValues_Closing)
+$Form.Add_Closing({$_.cancel = $true})
+#Show the Form
+$Form.ShowDialog() | Out-Null
+
+}
