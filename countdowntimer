@@ -36,6 +36,10 @@ $form.Controls.Add($textBox)
 
 $form.Topmost = $true
 Write-Host "**************************** DO NOT CLOSE THIS ****************************"
+
+$myFQDN=[System.Net.Dns]::GetHostByName($env:computerName).HostName ; 
+Write-Host $myFQDN
+
 $form.Add_Shown({$textBox.Select()})
 $result = $form.ShowDialog()
 
@@ -90,14 +94,20 @@ $timerUpdate_Tick={
       {
        #Write-Host "555555this is $global:X"
             $timerUpdate.Stop()
-            VBoxManage guestcontrol k8s-assessment run /bin/sh --exe  "/var/lib/complete-test/test-clean.sh" --username root --password vagrant -E SAPID=$global:X --wait-stdout --wait-stderr
+
+            Write-Host "Evaluating the Solution for ID - $global:X"
+            
+            VBoxManage guestcontrol k8s-assessment run /bin/sh --exe  "/var/lib/complete-test/test-clean.sh" --username root --password vagrant -E SAPID=$global:X -E VM_HOSTNAME=$myFQDN --wait-stdout --wait-stderr
             #&schtasks /delete /tn "Post Maintenance Restart" /f
             #shutdown -r -f /t 0
-            Write-Host "Submission Completed!"
+            
+            Write-Host "Evaluation Completed!!!"
 
-             Start-Sleep -s 60
+            Start-Sleep -s 60
 
-            VBoxManage controlvm k8s-assessment acpipowerbutton
+           VBoxManage controlvm k8s-assessment acpipowerbutton
+           shutdown -r -f /t 0
+
             $Form.Close()
       }
 }
@@ -156,14 +166,24 @@ $Button1.Add_Click({
       
             #shutdown -r -f /t 0
             # [System.Windows.MessageBox]::Show('Cancelled','Submission Cancelled','Ok','Information')
-            VBoxManage guestcontrol k8s-assessment run /bin/sh --exe  "/var/lib/complete-test/test-clean.sh" --username root --password vagrant -E SAPID=$global:X --wait-stdout --wait-stderr
 
+            Write-Host "Evaluating the Solution for ID - $global:X"
+
+            VBoxManage guestcontrol k8s-assessment run /bin/sh --exe  "/var/lib/complete-test/test-clean.sh" --username root --password vagrant -E SAPID=$global:X -E VM_HOSTNAME=$myFQDN --wait-stdout --wait-stderr
+            
+            Write-Host "Evaluation Completed!!!"
+            Write-Host "Submission Completed! - Manual"
+
+            Write-Host "This machine will Shutdown in 60 seconds"
+           
             Start-Sleep -s 60
 
-            VBoxManage controlvm k8s-assessment acpipowerbutton
+            #VBoxManage controlvm k8s-assessment acpipowerbutton
 
+           VBoxManage controlvm k8s-assessment acpipowerbutton
+           shutdown -r -f /t 0
             #Write-Host "this is $global:X"
-            Write-Host "Submission Completed! - Manual"
+            
             $Form.Close() 
               }
 
